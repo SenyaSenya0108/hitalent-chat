@@ -9,7 +9,7 @@ import (
 )
 
 type ChatHandler struct {
-	provider *provider.ChatProvider
+	provider provider.ChatProvider
 }
 
 func NewChatHandler() *ChatHandler {
@@ -34,4 +34,18 @@ func (h *ChatHandler) AddChat(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
+}
+
+func (h *ChatHandler) AddMessageToChat(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ChatHandler) GetByID(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *ChatHandler) Delete(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
 }

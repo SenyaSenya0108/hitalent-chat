@@ -5,17 +5,21 @@ import (
 	"chat/internal/repository"
 )
 
-type ChatProvider struct {
+type ChatProvider interface {
+	Create(*model.ChatCreateDTO) (*model.Chat, error)
+}
+
+type Chat struct {
 	repo *repository.ChatRepository
 }
 
-func NewChatProvider() *ChatProvider {
-	return &ChatProvider{
+func NewChatProvider() *Chat {
+	return &Chat{
 		repo: repository.NewChatRepository(),
 	}
 }
 
-func (p *ChatProvider) Create(data *model.ChatCreateDTO) (*model.Chat, error) {
+func (p *Chat) Create(data *model.ChatCreateDTO) (*model.Chat, error) {
 	chat := &model.Chat{Title: data.Title}
 	response, err := p.repo.Create(chat)
 	if err != nil {
