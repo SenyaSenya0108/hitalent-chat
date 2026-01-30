@@ -7,10 +7,13 @@ import (
 
 type ChatProvider interface {
 	Create(*model.ChatCreateDTO) (*model.Chat, error)
+	GetByID(data *model.GetByIdRequestDTO) (*model.Chat, error)
+	AddMessageToChat(data *model.AddMessageDTO) (*model.Message, error)
+	Delete(id uint) error
 }
 
 type Chat struct {
-	repo *repository.ChatRepository
+	repo *repository.Chat
 }
 
 func NewChatProvider() *Chat {
@@ -27,4 +30,19 @@ func (p *Chat) Create(data *model.ChatCreateDTO) (*model.Chat, error) {
 	}
 
 	return response, nil
+}
+
+func (p *Chat) GetByID(data *model.GetByIdRequestDTO) (*model.Chat, error) {
+	chat, err := p.repo.GetByID(data.ChatID, data.Limit)
+	return chat, err
+}
+
+func (p *Chat) AddMessageToChat(data *model.AddMessageDTO) (*model.Message, error) {
+	message := &model.Message{Text: data.Text, ChatID: data.ChatID}
+
+	return p.repo.AddMessageToChat(message)
+}
+
+func (p *Chat) Delete(id uint) error {
+	return p.repo.Delete(id)
 }

@@ -104,7 +104,7 @@ func TestAddChat(t *testing.T) {
 				tt.mockSetup(mockProvider)
 			}
 
-			handler := &ChatHandler{provider: mockProvider}
+			handler := &Chat{provider: mockProvider}
 			req := newRequest(t, http.MethodPost, "/chats", tt.requestBody)
 			rec := httptest.NewRecorder()
 
@@ -126,7 +126,7 @@ func TestAddChat_Headers(t *testing.T) {
 	mockProvider.On("Create", mock.Anything).
 		Return(&model.Chat{ID: 1}, nil)
 
-	handler := &ChatHandler{provider: mockProvider}
+	handler := &Chat{provider: mockProvider}
 	req := newRequest(t, http.MethodPost, "/chats/", &model.ChatCreateDTO{Title: "Test"})
 	rec := httptest.NewRecorder()
 

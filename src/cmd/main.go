@@ -1,6 +1,7 @@
 package main
 
 import (
+	"chat/internal/middleware"
 	"context"
 	"errors"
 	"log"
@@ -23,7 +24,12 @@ func main() {
 	router := http.NewServeMux()
 	chatHandler := handler.NewChatHandler()
 
-	router.HandleFunc("POST /chats/", chatHandler.AddChat)
+	getChatByID := http.HandlerFunc(chatHandler.GetByID)
+
+	router.HandleFunc("POST /chats", chatHandler.AddChat)
+	router.HandleFunc("POST /chats/{id}/messages/", chatHandler.AddMessageToChat)
+	router.HandleFunc("GET /chats/{id}", middleware.HttpQueryParameter(getChatByID))
+	router.HandleFunc("DELETE /chats/{id}", chatHandler.Delete)
 
 	server := &http.Server{
 		Addr:         ":8080",
