@@ -3,7 +3,6 @@ package validation
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -54,8 +53,6 @@ func (v *Service) validationErrorToText(errors *string, e validator.FieldError) 
 func (v *Service) ValidationHttpRequest(s interface{}) (error, int) {
 	err := v.validate.Struct(s)
 	if err != nil {
-		//TODO
-		log.Println(err.Error())
 		var validationErrors validator.ValidationErrors
 		var textErrors string
 		if errors.As(err, &validationErrors) {

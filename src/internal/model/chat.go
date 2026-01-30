@@ -14,6 +14,19 @@ type GetByIdRequestDTO struct {
 	Limit  int
 }
 
-type AddChatDTO struct {
+type AddChatRequestDTO struct {
 	Title string `validate:"required,min=1,max=200"`
+}
+
+type AddChatResponseDTO struct {
+	ID        uint
+	Title     string
+	CreatedAt time.Time
+}
+
+type GetChatByIDResponseDTO struct {
+	ID        uint
+	Title     string
+	Messages  []Message
+	CreatedAt time.Time
 }

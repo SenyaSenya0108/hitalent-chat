@@ -27,7 +27,7 @@ func NewChatHandler() *Chat {
 }
 
 func (h *Chat) AddChat(w http.ResponseWriter, r *http.Request) {
-	request := model.AddChatDTO{}
+	request := model.AddChatRequestDTO{}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
@@ -105,7 +105,7 @@ func (h *Chat) AddMessageToChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	request := model.AddMessageDTO{ChatID: uint(id)}
+	request := model.AddMessageRequestDTO{ChatID: uint(id)}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		log.Println(errors.New(fmt.Sprint(err)))

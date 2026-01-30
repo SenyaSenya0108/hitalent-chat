@@ -9,7 +9,14 @@ type Message struct {
 	CreatedAt time.Time
 }
 
-type AddMessageDTO struct {
+type AddMessageRequestDTO struct {
 	Text   string `validate:"required,min=1,max=5000"`
 	ChatID uint
+}
+
+type AddMessageResponseDTO struct {
+	ID        uint
+	Text      string
+	ChatID    uint
+	CreatedAt time.Time
 }
