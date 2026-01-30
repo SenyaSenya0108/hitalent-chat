@@ -11,28 +11,35 @@ import (
 	"chat/internal/model"
 	"chat/internal/provider"
 	"chat/internal/repository"
-
-	"gorm.io/gorm"
+	"chat/internal/validation"
 )
 
 type Chat struct {
 	provider provider.ChatProvider
+	validate *validation.Service
 }
 
 func NewChatHandler() *Chat {
 	return &Chat{
 		provider: provider.NewChatProvider(),
+		validate: validation.GetValidator(),
 	}
 }
 
 func (h *Chat) AddChat(w http.ResponseWriter, r *http.Request) {
-	request := &model.ChatCreateDTO{}
-	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
+	request := model.AddChatDTO{}
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	response, err := h.provider.Create(request)
+	validationErr, code := h.validate.ValidationHttpRequest(&request)
+	if validationErr != nil {
+		http.Error(w, validationErr.Error(), code)
+		return
+	}
+
+	response, err := h.provider.Create(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -56,12 +63,14 @@ func (h *Chat) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	chat, err := h.provider.GetByID(request)
 	if err != nil {
-		if errors.Is(err, repository.ErrNotFound) {
+		if errors.Is(err, repository.ErrChatNotFound) {
 			http.Error(w, "chat not found", http.StatusNotFound)
+			log.Println(errors.New(fmt.Sprint(err)))
 			return
 		}
 
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
@@ -96,17 +105,23 @@ func (h *Chat) AddMessageToChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	request := &model.AddMessageDTO{ChatID: uint(id)}
-	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
+	request := model.AddMessageDTO{ChatID: uint(id)}
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
-	response, err := h.provider.AddMessageToChat(request)
+	validationErr, code := h.validate.ValidationHttpRequest(&request)
+	if validationErr != nil {
+		http.Error(w, validationErr.Error(), code)
+		return
+	}
+
+	response, err := h.provider.AddMessageToChat(&request)
 	if err != nil {
-		if errors.Is(err, gorm.ErrForeignKeyViolated) {
-			http.Error(w, "chatID error", http.StatusBadRequest)
+		if errors.Is(err, repository.ErrChatNotFound) {
+			http.Error(w, "chat not found", http.StatusNotFound)
 			log.Println(errors.New(fmt.Sprint(err)))
 			return
 		}

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"chat/internal/model"
@@ -34,7 +35,7 @@ func (r *Chat) GetByID(id uint, limit int) (*model.Chat, error) {
 		return db.Order("created_at DESC").Limit(limit) // лимит для сообщений
 	}).Take(chat, id)
 	if result.RowsAffected == 0 {
-		return nil, fmt.Errorf("%w", ErrNotFound)
+		return nil, fmt.Errorf("%w", ErrChatNotFound)
 	}
 
 	if result.Error != nil {
@@ -54,8 +55,20 @@ func (r *Chat) Delete(id uint) error {
 }
 
 func (r *Chat) AddMessageToChat(message *model.Message) (*model.Message, error) {
-	result := r.db.Create(message)
+	var chatID uint
+	err := r.db.Model(&model.Chat{}).
+		Select("id").
+		Where("id = ?", message.ChatID).
+		Take(&chatID).Error
 
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrChatNotFound
+		}
+		return nil, err
+	}
+
+	result := r.db.Create(message)
 	if result.Error != nil {
 		return nil, result.Error
 	}

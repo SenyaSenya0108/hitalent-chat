@@ -6,7 +6,7 @@ import (
 )
 
 type ChatProvider interface {
-	Create(*model.ChatCreateDTO) (*model.Chat, error)
+	Create(*model.AddChatDTO) (*model.Chat, error)
 	GetByID(data *model.GetByIdRequestDTO) (*model.Chat, error)
 	AddMessageToChat(data *model.AddMessageDTO) (*model.Message, error)
 	Delete(id uint) error
@@ -22,7 +22,7 @@ func NewChatProvider() *Chat {
 	}
 }
 
-func (p *Chat) Create(data *model.ChatCreateDTO) (*model.Chat, error) {
+func (p *Chat) Create(data *model.AddChatDTO) (*model.Chat, error) {
 	chat := &model.Chat{Title: data.Title}
 	response, err := p.repo.Create(chat)
 	if err != nil {

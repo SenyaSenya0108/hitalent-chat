@@ -14,6 +14,6 @@ type GetByIdRequestDTO struct {
 	Limit  int
 }
 
-type ChatCreateDTO struct {
-	Title string `json:"title"`
+type AddChatDTO struct {
+	Title string `validate:"required,min=1,max=200"`
 }

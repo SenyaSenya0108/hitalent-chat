@@ -10,6 +10,6 @@ type Message struct {
 }
 
 type AddMessageDTO struct {
-	Text   string
+	Text   string `validate:"required,min=1,max=5000"`
 	ChatID uint
 }

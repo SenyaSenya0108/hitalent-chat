@@ -17,7 +17,7 @@ type MockChatProvider struct {
 	mock.Mock
 }
 
-func (m *MockChatProvider) Create(dto *model.ChatCreateDTO) (*model.Chat, error) {
+func (m *MockChatProvider) Create(dto *model.AddChatDTO) (*model.Chat, error) {
 	args := m.Called(dto)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -47,9 +47,9 @@ func TestAddChat(t *testing.T) {
 	}{
 		{
 			name:        "Успешное создание чата",
-			requestBody: &model.ChatCreateDTO{Title: "Test Chat"},
+			requestBody: &model.AddChatDTO{Title: "Test Chat"},
 			mockSetup: func(m *MockChatProvider) {
-				m.On("Create", &model.ChatCreateDTO{Title: "Test Chat"}).
+				m.On("Create", &model.AddChatDTO{Title: "Test Chat"}).
 					Return(&model.Chat{ID: uint(1), Title: "Test Chat"}, nil)
 			},
 			expectedStatus: http.StatusCreated,
@@ -70,7 +70,7 @@ func TestAddChat(t *testing.T) {
 		},
 		{
 			name:        "Ошибка валидации (пустое поле)",
-			requestBody: &model.ChatCreateDTO{Title: ""},
+			requestBody: &model.AddChatDTO{Title: ""},
 			mockSetup: func(m *MockChatProvider) {
 				m.On("Create", mock.Anything).
 					Return(nil, assert.AnError) // Или конкретная ошибка валидации
@@ -80,9 +80,9 @@ func TestAddChat(t *testing.T) {
 		},
 		{
 			name:        "Ошибка провайдера",
-			requestBody: &model.ChatCreateDTO{Title: "Error Chat"},
+			requestBody: &model.AddChatDTO{Title: "Error Chat"},
 			mockSetup: func(m *MockChatProvider) {
-				m.On("Create", &model.ChatCreateDTO{Title: "Error Chat"}).
+				m.On("Create", &model.AddChatDTO{Title: "Error Chat"}).
 					Return(nil, assert.AnError)
 			},
 			expectedStatus: http.StatusInternalServerError,
@@ -127,7 +127,7 @@ func TestAddChat_Headers(t *testing.T) {
 		Return(&model.Chat{ID: 1}, nil)
 
 	handler := &Chat{provider: mockProvider}
-	req := newRequest(t, http.MethodPost, "/chats/", &model.ChatCreateDTO{Title: "Test"})
+	req := newRequest(t, http.MethodPost, "/chats/", &model.AddChatDTO{Title: "Test"})
 	rec := httptest.NewRecorder()
 
 	handler.AddChat(rec, req)

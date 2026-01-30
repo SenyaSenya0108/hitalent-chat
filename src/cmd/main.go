@@ -2,6 +2,7 @@ package main
 
 import (
 	"chat/internal/middleware"
+	"chat/internal/validation"
 	"context"
 	"errors"
 	"log"
@@ -16,10 +17,14 @@ import (
 )
 
 func main() {
+	// DB
 	err := storage.Connect()
 	if err != nil {
 		log.Panic(err)
 	}
+
+	//Validation
+	validation.InitValidator()
 
 	router := http.NewServeMux()
 	chatHandler := handler.NewChatHandler()
