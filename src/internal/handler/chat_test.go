@@ -22,19 +22,19 @@ func (m *mockChatProvider) Delete(id uint) error {
 func (m *mockChatProvider) Create(
 	*model.AddChatRequestDTO,
 ) (*model.AddChatResponseDTO, error) {
-	panic("Create should not be called in Delete tests")
+	panic("Stub test")
 }
 
 func (m *mockChatProvider) GetByID(
 	*model.GetByIdRequestDTO,
 ) (*model.GetChatByIDResponseDTO, error) {
-	panic("GetByID should not be called in Delete tests")
+	panic("Stub test")
 }
 
 func (m *mockChatProvider) AddMessageToChat(
 	*model.AddMessageRequestDTO,
 ) (*model.AddMessageResponseDTO, error) {
-	panic("AddMessageToChat should not be called in Delete tests")
+	panic("Stub test")
 }
 
 func TestChat_Delete_Success(t *testing.T) {
