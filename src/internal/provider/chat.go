@@ -3,6 +3,7 @@ package provider
 import (
 	"chat/internal/model"
 	"chat/internal/repository"
+	"strings"
 )
 
 type ChatProvider interface {
@@ -23,7 +24,7 @@ func NewChatProvider() *Chat {
 }
 
 func (p *Chat) Create(data *model.AddChatRequestDTO) (*model.AddChatResponseDTO, error) {
-	chat := &model.Chat{Title: data.Title}
+	chat := &model.Chat{Title: strings.Trim(data.Title, " ")}
 	response, err := p.repo.Create(chat)
 	if err != nil {
 		return nil, err

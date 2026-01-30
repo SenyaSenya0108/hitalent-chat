@@ -30,18 +30,21 @@ func (h *Chat) AddChat(w http.ResponseWriter, r *http.Request) {
 	request := model.AddChatRequestDTO{}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
 	validationErr, code := h.validate.ValidationHttpRequest(&request)
 	if validationErr != nil {
 		http.Error(w, validationErr.Error(), code)
+		log.Println(errors.New(fmt.Sprint(validationErr.Error())))
 		return
 	}
 
 	response, err := h.provider.Create(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
@@ -55,6 +58,7 @@ func (h *Chat) GetByID(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(chatID, 10, 64)
 	if err != nil {
 		http.Error(w, "invalid chat ID", http.StatusBadRequest)
+		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
@@ -90,6 +94,7 @@ func (h *Chat) Delete(w http.ResponseWriter, r *http.Request) {
 	err = h.provider.Delete(uint(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
@@ -115,6 +120,7 @@ func (h *Chat) AddMessageToChat(w http.ResponseWriter, r *http.Request) {
 	validationErr, code := h.validate.ValidationHttpRequest(&request)
 	if validationErr != nil {
 		http.Error(w, validationErr.Error(), code)
+		log.Println(errors.New(fmt.Sprint(err)))
 		return
 	}
 
