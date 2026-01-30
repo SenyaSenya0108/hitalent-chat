@@ -3,7 +3,7 @@
 CREATE TABLE chats
 (
     id         SERIAL PRIMARY KEY,
-    title      VARCHAR(255) NOT NULL,
+    title      VARCHAR(200) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- +goose StatementEnd
